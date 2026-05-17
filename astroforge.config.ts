@@ -7,14 +7,22 @@ import type { AstroForgePluginOptions } from "@astralsight/astroforge-rsbuild-pl
 // - plugin.target：当前仅支持 `"vela"`。
 export default {
   manifest: {
-    package: "com.example.bettergobang",
-    name: "better-gobang",
-    versionName: "1.0.0",
-    versionCode: 1,
-    minPlatformVersion: 1200,
-    icon: "/common/logo.svg",
+    package: "top.zaona.gobang.better",
+    name: "五子棋",
+    versionName: "1.6.4",
+    versionCode: 9,
+    minPlatformVersion: 1000,
+    icon: "/common/logo.png",
     deviceTypeList: ["watch"],
-    features: [],
+    features: [
+      { name: "system.router" },
+      { name: "system.prompt" },
+      { name: "system.app" },
+      { name: "system.device" },
+    ],
+    display: {
+      backgroundColor: "#000000",
+    },
     config: {
       logLevel: "log",
       designWidth: "device-width",

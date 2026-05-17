@@ -18,7 +18,7 @@ tsconfig.json              # 启用 JSX automatic runtime + @astralsight/astrofo
 
 ```bash
 pnpm install                                  # 安装依赖
-pnpm run build                                # 产出 debug rpk → dist/<package>.debug.rpk
+pnpm run build                                # 产出 debug rpk → dist/top.zaona.gobang.better.debug.rpk
 pnpm exec astroforge inspect rpk <path>       # 查看 rpk 文件结构与签名状态
 ```
 
@@ -31,9 +31,9 @@ AstroForge 0.0.10 在 Windows 上直接执行 `astroforge build` / `dev` / `rele
 | 官方原始命令 | Windows 临时可用命令 | 说明 |
 |---|---|---|
 | `pnpm install` | `pnpm install` | 安装依赖，不受影响。 |
-| `pnpm exec astroforge build --target vela` | `pnpm run build` | 已验证可用，产出 `dist\com.example.bettergobang.debug.rpk`。 |
+| `pnpm exec astroforge build --target vela` | `pnpm run build` | 已验证可用，产出 `dist\top.zaona.gobang.better.debug.rpk`。 |
 | `pnpm exec astroforge inspect rpk <path>` | `pnpm exec astroforge inspect rpk <path>` | 检查 rpk，不受影响。 |
-| `pnpm exec astroforge inspect rpk dist/*.debug.rpk` | `pnpm exec astroforge inspect rpk dist\com.example.bettergobang.debug.rpk` | Windows PowerShell 不按 bash glob 方式展开 `*.debug.rpk`，建议写明确路径。 |
+| `pnpm exec astroforge inspect rpk dist/*.debug.rpk` | `pnpm exec astroforge inspect rpk dist\top.zaona.gobang.better.debug.rpk` | Windows PowerShell 不按 bash glob 方式展开 `*.debug.rpk`，建议写明确路径。 |
 | `pnpm exec astroforge dev` | 暂无等价替代 | `dev` 内部会启动 `pnpm exec rsbuild dev`，仍会触发 `pnpm.CMD` 解析问题。 |
 | `pnpm exec astroforge release --target vela` | 暂无等价替代 | `release` 没有 `--skip-rsbuild` 参数，仍会触发同一个问题；需要 release 包时先用 macOS / Linux。 |
 

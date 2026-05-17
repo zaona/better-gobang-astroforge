@@ -7,7 +7,7 @@
     "build": "rsbuild build && astroforge build --target vela --skip-rsbuild",
     "release": "astroforge release --target vela",
     "dev": "astroforge dev",
-    "inspect": "astroforge inspect rpk dist/*.debug.rpk"
+    "inspect": "astroforge inspect rpk dist/top.zaona.gobang.better.debug.rpk"
   },
   "dependencies": {
     "@astralsight/astroforge-core": "^0.0.10",

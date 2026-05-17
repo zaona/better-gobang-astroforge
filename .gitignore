@@ -4,3 +4,5 @@ dist/
 *.log
 .tmp/
 node_modules/.cache/
+
+compare

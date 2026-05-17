@@ -5,6 +5,10 @@
 // `onDestroy` / `onError` / `onPageNotFound`，按需添加。
 export default {
   onCreate() {
-    // 应用初始化时调用一次。可在此初始化全局状态或注册系统监听。
+    console.log("app created");
+  },
+
+  onDestroy() {
+    console.log("app destroyed");
   },
 };
