@@ -1,0 +1,21 @@
+{
+  "name": "better-gobang-astroforge",
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build:ir": "rsbuild build",
+    "build": "rsbuild build && astroforge build --target vela --skip-rsbuild",
+    "release": "astroforge release --target vela",
+    "dev": "astroforge dev",
+    "inspect": "astroforge inspect rpk dist/*.debug.rpk"
+  },
+  "dependencies": {
+    "@astralsight/astroforge-core": "^0.0.10",
+    "@astralsight/astroforge-rsbuild-plugin": "^0.0.10"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^2.0.0",
+    "@astralsight/astroforge": "^0.0.10",
+    "typescript": "^5.0.0"
+  }
+}
