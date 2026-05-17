@@ -1,7 +1,10 @@
 // @ts-nocheck
 import {
+  app,
+  device,
   Image,
   Input,
+  prompt,
   Stack,
   View,
   useState,
@@ -37,15 +40,7 @@ export const styles = `
     width: 160px;
     height: 80px;
     background-color: rgba(38, 38, 38, 0.7);
-    border-top-color: rgba(255, 255, 255, 0.06);
-    border-right-color: rgba(255, 255, 255, 0.06);
-    border-bottom-color: rgba(255, 255, 255, 0.06);
-    border-left-color: rgba(255, 255, 255, 0.06);
-    border-style: solid;
-    border-top-width: 4px;
-    border-right-width: 4px;
-    border-bottom-width: 4px;
-    border-left-width: 4px;
+    border: 4px solid rgba(255, 255, 255, 0.06);
     border-radius: 50%;
     color: #ffffff;
     font-size: 28px;
@@ -64,30 +59,14 @@ export const styles = `
 
   .board-grid {
     position: absolute;
-    border-top-color: #000000;
-    border-right-color: #000000;
-    border-bottom-color: #000000;
-    border-left-color: #000000;
-    border-style: solid;
-    border-top-width: 1px;
-    border-right-width: 1px;
-    border-bottom-width: 1px;
-    border-left-width: 1px;
+    border: 1px solid #000000;
   }
 
   .board-frame {
     position: absolute;
     background-color: #daa06d;
     border-radius: 8px;
-    border-top-color: #a37d54;
-    border-right-color: #a37d54;
-    border-bottom-color: #a37d54;
-    border-left-color: #a37d54;
-    border-style: solid;
-    border-top-width: 8px;
-    border-right-width: 8px;
-    border-bottom-width: 8px;
-    border-left-width: 8px;
+    border: 8px solid #a37d54;
   }
 `;
 
@@ -147,26 +126,22 @@ export default function IndexPage() {
 
   function computeVerticalOffset(height) {
     const validHeight = typeof height === "number" ? height : 480;
-    const delta = validHeight - 600;
-    return delta / 2;
+    return (validHeight - 600) / 2;
   }
 
   function computeHorizontalOffset(width) {
     const validWidth = typeof width === "number" && width > 0 ? width : 600;
-    const delta = validWidth - 600;
-    return delta / 2;
+    return (validWidth - 600) / 2;
   }
 
   function computeButtonOffset(width) {
     const validWidth = typeof width === "number" && width > 0 ? width : 600;
-    const delta = validWidth - 160;
-    const offset = delta / 2;
+    const offset = (validWidth - 160) / 2;
     return offset > 0 ? offset : 0;
   }
 
   function computeCellSize() {
-    const intervals = 15 - 1;
-    return 600 / intervals;
+    return 600 / (15 - 1);
   }
 
   function computePieceSize() {
@@ -180,8 +155,7 @@ export default function IndexPage() {
   }
 
   function computeCenteredOffset(size) {
-    const offset = 0 - size;
-    return offset / 2;
+    return (0 - size) / 2;
   }
 
   function createCursorState(src) {
@@ -322,8 +296,7 @@ export default function IndexPage() {
   }
 
   function fetchScreenInfo() {
-    const deviceApi = $app_require$("@app-module/system.device");
-    deviceApi.getInfo({
+    device.getInfo({
       success: (info = {}) => {
         const currentWidth =
           typeof info.screenWidth === "number" && info.screenWidth > 0
@@ -372,8 +345,7 @@ export default function IndexPage() {
     }
 
     if (!this.hasSelection || this.board[this.selectedCol][this.selectedRow] !== 0) {
-      const promptApi = $app_require$("@app-module/system.prompt");
-      promptApi.showToast({
+      prompt.showToast({
         message: "请先点击棋盘，选择落子位置",
         duration: 2000,
       });
@@ -411,8 +383,7 @@ export default function IndexPage() {
     const won = this.updateWins(col, row, owner);
 
     if (won) {
-      const promptApi = $app_require$("@app-module/system.prompt");
-      promptApi.showToast({
+      prompt.showToast({
         message: owner === 1 ? "恭喜获得胜利！" : "AI胜利",
         duration: owner === 1 ? 4000 : 3000,
       });
@@ -463,8 +434,7 @@ export default function IndexPage() {
   function autoAiMove() {
     const pick = this.pickBestMove();
     if (!pick) {
-      const promptApi = $app_require$("@app-module/system.prompt");
-      promptApi.showToast({
+      prompt.showToast({
         message: "平局，游戏结束",
         duration: 4000,
       });
@@ -662,8 +632,7 @@ export default function IndexPage() {
     if (typeof qa !== "undefined" && typeof qa.exitApplication === "function") {
       qa.exitApplication();
     } else {
-      const appApi = $app_require$("@app-module/system.app");
-      appApi.terminate();
+      app.terminate();
     }
   }
 

@@ -4,18 +4,18 @@
   "type": "module",
   "scripts": {
     "build:ir": "rsbuild build",
-    "build": "rsbuild build && astroforge build --target vela --skip-rsbuild",
+    "build": "astroforge build --target vela",
     "release": "astroforge release --target vela",
     "dev": "astroforge dev",
     "inspect": "astroforge inspect rpk dist/top.zaona.gobang.better.debug.rpk"
   },
   "dependencies": {
-    "@astralsight/astroforge-core": "^0.0.10",
-    "@astralsight/astroforge-rsbuild-plugin": "^0.0.10"
+    "@astralsight/astroforge-core": "^0.0.11",
+    "@astralsight/astroforge-rsbuild-plugin": "^0.0.11"
   },
   "devDependencies": {
     "@rsbuild/core": "^2.0.0",
-    "@astralsight/astroforge": "^0.0.10",
+    "@astralsight/astroforge": "^0.0.11",
     "typescript": "^5.0.0"
   }
 }
