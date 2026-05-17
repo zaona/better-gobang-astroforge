@@ -91,7 +91,6 @@ export const lifecycle = {
 
 export default function IndexPage() {
   const [pieces, setPieces] = useState([]);
-  const [jsonstr, setJsonstr] = useState(0);
   const [screenWidth, setScreenWidth] = useState(600);
   const [screenHeight, setScreenHeight] = useState(480);
   const [startX, setStartX] = useState(0);
@@ -125,33 +124,43 @@ export default function IndexPage() {
   const [ignoreNextClick, setIgnoreNextClick] = useState(false);
 
   function computeVerticalOffset(height) {
-    const validHeight = typeof height === "number" ? height : 480;
-    return (validHeight - 600) / 2;
+    const defaultHeight = 480;
+    const boardPixelSize = 600;
+    const validHeight = typeof height === "number" ? height : defaultHeight;
+    return (validHeight - boardPixelSize) / 2;
   }
 
   function computeHorizontalOffset(width) {
-    const validWidth = typeof width === "number" && width > 0 ? width : 600;
-    return (validWidth - 600) / 2;
+    const defaultWidth = 600;
+    const boardPixelSize = 600;
+    const validWidth = typeof width === "number" && width > 0 ? width : defaultWidth;
+    return (validWidth - boardPixelSize) / 2;
   }
 
   function computeButtonOffset(width) {
-    const validWidth = typeof width === "number" && width > 0 ? width : 600;
-    const offset = (validWidth - 160) / 2;
+    const defaultWidth = 600;
+    const buttonWidth = 160;
+    const validWidth = typeof width === "number" && width > 0 ? width : defaultWidth;
+    const offset = (validWidth - buttonWidth) / 2;
     return offset > 0 ? offset : 0;
   }
 
   function computeCellSize() {
-    return 600 / (15 - 1);
+    const boardPixelSize = 600;
+    const boardCount = 15;
+    return boardPixelSize / (boardCount - 1);
   }
 
   function computePieceSize() {
+    const pieceScale = 0.8;
     const cellSize = this.computeCellSize();
-    return cellSize * 0.8;
+    return cellSize * pieceScale;
   }
 
   function computeCursorSize() {
+    const cursorScale = 1.2;
     const cellSize = this.computeCellSize();
-    return cellSize * 1.2;
+    return cellSize * cursorScale;
   }
 
   function computeCenteredOffset(size) {
@@ -171,12 +180,20 @@ export default function IndexPage() {
     };
   }
 
-  function createMatrix(size, initialValue, nested) {
-    if (nested === false) {
-      return Array(size).fill(initialValue);
-    }
+  function createVector(size, initialValue) {
+    return Array(size).fill(initialValue);
+  }
+
+  function createMatrix(size, initialValue) {
     return Array.from({ length: size }, function () {
       return Array(size).fill(initialValue);
+    });
+  }
+
+  function showToast(message, duration) {
+    prompt.showToast({
+      message,
+      duration,
     });
   }
 
@@ -223,58 +240,56 @@ export default function IndexPage() {
     return { x, y };
   }
 
+  function addWinPattern(stepCol, stepRow, startCol, startRow) {
+    const winLength = 5;
+    let index = this.totalPatterns;
+
+    for (let offset = 0; offset < winLength; offset++) {
+      this.winRefs[startCol + stepCol * offset][startRow + stepRow * offset].push(index);
+    }
+
+    this.totalPatterns = index + 1;
+  }
+
   function prepareWinRefs() {
-    this.winRefs = Array.from({ length: 15 }, function () {
-      return Array.from({ length: 15 }, function () {
+    const boardCount = 15;
+    this.winRefs = Array.from({ length: boardCount }, function () {
+      return Array.from({ length: boardCount }, function () {
         return [];
       });
     });
-    let index = 0;
+    this.totalPatterns = 0;
 
-    for (let col = 0; col < 15; col++) {
+    for (let col = 0; col < boardCount; col++) {
       for (let row = 0; row <= 10; row++) {
-        for (let offset = 0; offset < 5; offset++) {
-          this.winRefs[col][row + offset].push(index);
-        }
-        index++;
+        this.addWinPattern(0, 1, col, row);
       }
     }
 
-    for (let row = 0; row < 15; row++) {
+    for (let row = 0; row < boardCount; row++) {
       for (let col = 0; col <= 10; col++) {
-        for (let offset = 0; offset < 5; offset++) {
-          this.winRefs[col + offset][row].push(index);
-        }
-        index++;
+        this.addWinPattern(1, 0, col, row);
       }
     }
 
     for (let col = 0; col <= 10; col++) {
       for (let row = 0; row <= 10; row++) {
-        for (let offset = 0; offset < 5; offset++) {
-          this.winRefs[col + offset][row + offset].push(index);
-        }
-        index++;
+        this.addWinPattern(1, 1, col, row);
       }
     }
 
     for (let col = 0; col <= 10; col++) {
-      for (let row = 14; row >= 4; row--) {
-        for (let offset = 0; offset < 5; offset++) {
-          this.winRefs[col + offset][row - offset].push(index);
-        }
-        index++;
+      for (let row = boardCount - 1; row >= 4; row--) {
+        this.addWinPattern(1, -1, col, row);
       }
     }
-
-    this.totalPatterns = index;
   }
 
   function resetRuntimeState() {
     this.board = this.createMatrix(15, 0);
     this.zone = this.createMatrix(15, 0);
-    this.playerWins = this.createMatrix(this.totalPatterns, 0, false);
-    this.aiWins = this.createMatrix(this.totalPatterns, 0, false);
+    this.playerWins = this.createVector(this.totalPatterns, 0);
+    this.aiWins = this.createVector(this.totalPatterns, 0);
     this.pieces = [];
     this.nextPieceId = 1;
     this.startX = this.computeHorizontalOffset(this.screenWidth);
@@ -323,7 +338,6 @@ export default function IndexPage() {
     } else {
       this.handlePlayerMove();
     }
-    this.jsonstr += 1;
   }
 
   function startGame() {
@@ -345,10 +359,7 @@ export default function IndexPage() {
     }
 
     if (!this.hasSelection || this.board[this.selectedCol][this.selectedRow] !== 0) {
-      prompt.showToast({
-        message: "请先点击棋盘，选择落子位置",
-        duration: 2000,
-      });
+      this.showToast("请先点击棋盘，选择落子位置", 2000);
       return;
     }
 
@@ -383,10 +394,7 @@ export default function IndexPage() {
     const won = this.updateWins(col, row, owner);
 
     if (won) {
-      prompt.showToast({
-        message: owner === 1 ? "恭喜获得胜利！" : "AI胜利",
-        duration: owner === 1 ? 4000 : 3000,
-      });
+      this.showToast(owner === 1 ? "恭喜获得胜利！" : "AI胜利", owner === 1 ? 4000 : 3000);
       this.finishGame();
     }
   }
@@ -434,10 +442,7 @@ export default function IndexPage() {
   function autoAiMove() {
     const pick = this.pickBestMove();
     if (!pick) {
-      prompt.showToast({
-        message: "平局，游戏结束",
-        duration: 4000,
-      });
+      this.showToast("平局，游戏结束", 4000);
       this.finishGame();
       return;
     }
@@ -567,7 +572,6 @@ export default function IndexPage() {
     this.selectedRow = row;
     this.hasSelection = true;
     this.updateCursor(col, row, true);
-    this.jsonstr += 1;
   }
 
   function onTouchStart(event) {
@@ -629,11 +633,7 @@ export default function IndexPage() {
   }
 
   function exitApp() {
-    if (typeof qa !== "undefined" && typeof qa.exitApplication === "function") {
-      qa.exitApplication();
-    } else {
-      app.terminate();
-    }
+    app.terminate();
   }
 
   return (
